@@ -361,6 +361,7 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
               controller: outerController,
               children: [
                 Container(
+                  constraints: BoxConstraints(maxHeight: 48),
                   height: widget.htmlToolbarOptions.toolbarItemHeight + 15,
                   child: Padding(
                     padding: const EdgeInsets.all(5.0),
