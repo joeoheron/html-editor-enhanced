@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:file_picker/file_picker.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:html_editor_enhanced/html_editor.dart';
@@ -329,6 +330,9 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final outerController = ScrollController();
+    final innerController = ScrollController();
+
     if (widget.htmlToolbarOptions.toolbarType == ToolbarType.nativeGrid) {
       return PointerInterceptor(
         child: AbsorbPointer(
@@ -353,23 +357,40 @@ class ToolbarWidgetState extends State<ToolbarWidget> {
           absorbing: !_enabled,
           child: Opacity(
             opacity: _enabled ? 1 : 0.5,
-            child: Container(
-              height: widget.htmlToolbarOptions.toolbarItemHeight + 15,
-              child: Padding(
-                padding: const EdgeInsets.all(5.0),
-                child: CustomScrollView(
-                  scrollDirection: Axis.horizontal,
-                  slivers: [
-                    SliverFillRemaining(
-                      hasScrollBody: false,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: _buildChildren(),
+            child: ListView(
+              controller: outerController,
+              children: [
+                Container(
+                  height: widget.htmlToolbarOptions.toolbarItemHeight + 15,
+                  child: Padding(
+                    padding: const EdgeInsets.all(5.0),
+                    child: Listener(
+                      onPointerSignal: (event) {
+                        if (event is PointerScrollEvent) {
+                          final offset = event.scrollDelta.dy;
+                          innerController
+                              .jumpTo(innerController.offset + offset);
+                          outerController
+                              .jumpTo(outerController.offset - offset);
+                        }
+                      },
+                      child: CustomScrollView(
+                        controller: innerController,
+                        scrollDirection: Axis.horizontal,
+                        slivers: [
+                          SliverFillRemaining(
+                            hasScrollBody: false,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: _buildChildren(),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
