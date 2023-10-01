@@ -28,13 +28,22 @@ class SummernoteAtMention extends Plugins {
   /// Callback to run code when a mention is selected
   final void Function(String)? onSelect;
 
-  const SummernoteAtMention(
-      {this.getSuggestionsMobile, this.mentionsWeb, this.onSelect})
-      : assert(kIsWeb ? mentionsWeb != null : getSuggestionsMobile != null);
+  final String containerBackgroundColor;
+  final String optionsTextColor;
+  final String optionsHighlightColor;
+
+  const SummernoteAtMention({
+    this.getSuggestionsMobile,
+    this.mentionsWeb,
+    this.onSelect,
+    required this.containerBackgroundColor,
+    required this.optionsTextColor,
+    required this.optionsHighlightColor,
+  }) : assert(kIsWeb ? mentionsWeb != null : getSuggestionsMobile != null);
 
   @override
   String getHeadString() {
-    return '<script src=\"assets/packages/html_editor_enhanced/assets/plugins/summernote-at-mention/summernote-at-mention.js\"></script>';
+    return '<script src=\"assets/packages/html_editor_enhanced/assets/plugins/summernote-at-mention/summernote-at-mention.js\"></script><script>window.summernoteAtMentionColors = {containerBackgroundColor: \"$containerBackgroundColor\", optionsTextColor: \"$optionsTextColor\", optionsHighlightColor: \"$optionsHighlightColor\"};</script>';
   }
 
   @override
